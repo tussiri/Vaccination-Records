@@ -37,6 +37,7 @@ UserSchema.methods.comparePassword = async function (password) {
     const isMatch = await bcrypt.compare(password, this.password);
     return isMatch;
   } catch (error) {
+    console.error("Error in comparePassword: ", error);
     throw new Error(error);
   }
 };
@@ -46,6 +47,17 @@ UserSchema.methods.generateAuthToken = function () {
     expiresIn: "1h", // or any desired expiration time
   });
   return token;
+};
+
+UserSchema.methods.toAuthJSON = function () {
+  return {
+    _id: this._id,
+    firstName: this.firstName,
+    lastName: this.lastName,
+    birthDate: this.birthDate,
+    email: this.email,
+    immunizationRecords: this.immunizationRecords,
+  };
 };
 
 const User = mongoose.model("User", UserSchema);

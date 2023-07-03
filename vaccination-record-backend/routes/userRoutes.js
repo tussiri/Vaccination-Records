@@ -61,8 +61,11 @@ router.post("/register", async (req, res) => {
 // POST login user
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log("Request body: ", req.body);
+  console.log("Provided password: ", password);
   try {
     const user = await User.findOne({ email });
+    console.log("Stored pasword: ", user.password);
     console.log("User:", user);
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -72,11 +75,11 @@ router.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    // const token = user.generateAuthToken();
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.json({ user: { user }, token });
+    const token = user.generateAuthToken();
+    // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    //   expiresIn: "1h",
+    // });
+    res.json({ user: user.toAuthJSON(), token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error Logging in" });
