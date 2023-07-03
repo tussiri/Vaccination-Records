@@ -143,7 +143,6 @@ const Dashboard = () => {
             {vaccinationRecords && (
               <VaccinationRecords records={vaccinationRecords} />
             )}
-            <VaccinationRecords records={vaccinationRecords} />
           </Grid>
         </Grid>
       </Container>

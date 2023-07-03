@@ -26,6 +26,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const { setUser } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -49,16 +50,18 @@ const Login = () => {
       if (response.data.token && response.status === 200) {
         localStorage.setItem("token", response.data.token);
         setUser(response.data.userData);
-        if (rememberMe) {
-          localStorage.setItem("email", email);
-          localStorage.setItem("password", password);
-          localStorage.setItem("rememberMe", rememberMe);
-        } else {
-          localStorage.removeItem("email");
-          localStorage.removeItem("password");
-          localStorage.removeItem("rememberMe");
-        }
         navigate("/dashboard");
+        // if (rememberMe) {
+        //   localStorage.setItem("email", email);
+        //   localStorage.setItem("password", password);
+        //   localStorage.setItem("rememberMe", rememberMe);
+        // } else {
+
+        //   localStorage.removeItem("email");
+        //   localStorage.removeItem("password");
+        //   localStorage.removeItem("rememberMe");
+        // }
+        // navigate("/dashboard");
       } else {
         setError("User object not found in response");
       }

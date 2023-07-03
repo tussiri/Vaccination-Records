@@ -1,61 +1,3 @@
-// import React, { useState, useCallback } from "react";
-// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import { CssBaseline, Container } from "@mui/material";
-// import Login from "./components/Login";
-// import Register from "./components/Register";
-// import Dashboard from "./components/Dashboard";
-// import { UserProvider } from "./contexts/UserContext";
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-// import { AuthProvider } from "./contexts/AuthContext";
-
-// function App() {
-//   const [authState, setAuthState] = useState({
-//     isAuthenticated: false,
-//     user: null,
-//     token: localStorage.getItem("token"),
-//   });
-
-//   const login = useCallback((userData) => {
-//     const { firstName } = userData;
-//     const userWithFirstName = { ...userData, firstName };
-
-//     localStorage.setItem("userData", JSON.stringify(userWithFirstName));
-//     setAuthState((prevState) => ({
-//       ...prevState,
-//       isAuthenticated: true,
-//       user: userWithFirstName,
-//     }));
-
-//     // Return an object with `data` and `status` properties
-//     return { data: userData, status: 200 };
-//   }, []);
-
-//   const logout = () => {
-//     localStorage.removeItem("userData");
-//     setAuthState({ isAuthenticated: false, user: null });
-//   };
-
-//   return (
-//     <AuthProvider authState={authState} login={login} logout={logout}>
-//       <LocalizationProvider dateAdapter={AdapterDayjs}>
-//         <UserProvider>
-//           <Router>
-//             <Routes>
-//               <Route path="/" element={<Login />} />
-//               <Route path="/login" element={<Login />} />
-//               <Route path="/register" element={<Register />} />
-//               <Route path="/dashboard" element={<Dashboard />} />
-//             </Routes>
-//           </Router>
-//         </UserProvider>
-//       </LocalizationProvider>
-//     </AuthProvider>
-//   );
-// }
-
-// export default App;
-
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -67,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import { AuthContext } from "./contexts/AuthContext";
 import { UserProvider } from "./contexts/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { login as loginApi } from "./services/api";
 
 const theme = createTheme();
 
@@ -88,25 +31,12 @@ const App = () => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(email, password),
-      });
-
-      if (response.status === 401) {
-        throw new Error("Invalid credentials");
-      }
-
-      const { token, user } = await response.json();
-      localStorage.setItem("token", token);
+      const user = await loginApi({ email, password });
       setAuthState({ status: "authenticated", error: null, user: user });
-      return user;
     } catch (error) {
       console.error(error);
-      const message = error.message || "Something went wrong!";
+      const message =
+        error.message || "Something went wrong while attempting to login";
       setAuthState({ status: "anonymous", error: message, user: null });
       throw error;
     }
