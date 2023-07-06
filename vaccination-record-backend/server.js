@@ -13,10 +13,17 @@ import immuzationRecordRoutes from "./routes/immunizationRecordRoutes.js";
 import travelVaccineRoutes from "./routes/travelVaccineRoutes.js";
 
 //connect to Mongo
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect(MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+if (process.env.NODE_ENV !== "test") {
+  mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+}
 
 const connection = mongoose.connection;
 connection.once("open", () => {

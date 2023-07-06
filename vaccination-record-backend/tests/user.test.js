@@ -1,15 +1,21 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { MongoMemmoryServer } from "mongodb-memory-server";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import app from "./server.js";
-import User from "./models/user.js";
+import app from "../server.js";
+import User from "../models/User.js";
 
 let mongoServer;
 
+beforeEach(async () => {
+  await User.deleteMany({});
+});
+
 beforeAll(async () => {
-  mongoServer = new MongoMemmoryServer();
+  process.env.JWT_SECRET = "test-test";
+  mongoServer = new MongoMemoryServer();
+  await mongoServer.start();
   const mongoUri = await mongoServer.getUri();
   await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
@@ -18,17 +24,17 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await mongoose.disconnect();
+  await mongoose.connection.close();
   await mongoServer.stop();
 });
 
 describe("User model", () => {
   it("should hash the password before saving", async () => {
     const user = new User({
-      firstName: "Test",
-      lastName: "User",
+      firstName: "Thomas",
+      lastName: "Tank",
       birthDate: "1990-01-01",
-      email: "test@example.com",
+      email: "thomas.tank@example.com",
       password: "password",
     });
     await user.save();
@@ -43,10 +49,10 @@ describe("User model", () => {
   });
   it("should validate the password correctly", async () => {
     const user = new User({
-      firstName: "Test",
-      lastName: "User",
+      firstName: "Thomas",
+      lastName: "Tank",
       birthDate: "1990-01-01",
-      email: "test@example.com",
+      email: "thomas.tank@example.com",
       password: "password",
     });
     await user.save();
@@ -57,10 +63,10 @@ describe("User model", () => {
   });
   it("should generate a valid auth token", async () => {
     const user = new User({
-      firstName: "Test",
-      lastName: "User",
+      firstName: "Thomas",
+      lastName: "Tank",
       birthDate: "1990-01-01",
-      email: "test@example.com",
+      email: "thomas.tank@example.com",
       password: "password",
     });
     await user.save();
