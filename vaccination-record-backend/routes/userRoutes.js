@@ -60,6 +60,8 @@ router.post("/register", async (req, res) => {
 
 // POST login user
 router.post("/login", async (req, res) => {
+  const isPasswordValid = true;
+
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });

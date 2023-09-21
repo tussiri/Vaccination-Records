@@ -38,6 +38,7 @@ const Login = () => {
       setRememberMe(true);
     }
   }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -45,29 +46,20 @@ const Login = () => {
         email,
         password,
       });
-      // console.log("login response:", response);
-
       if (response.data.token && response.status === 200) {
         localStorage.setItem("token", response.data.token);
         setUser(response.data.userData);
         navigate("/dashboard");
-        // if (rememberMe) {
-        //   localStorage.setItem("email", email);
-        //   localStorage.setItem("password", password);
-        //   localStorage.setItem("rememberMe", rememberMe);
-        // } else {
-
-        //   localStorage.removeItem("email");
-        //   localStorage.removeItem("password");
-        //   localStorage.removeItem("rememberMe");
-        // }
-        // navigate("/dashboard");
       } else {
         setError("User object not found in response");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("Invalid email or password");
+      if (error.response && error.response.data) {
+        setError(error.response.data.message || "Invalid email or password");
+      } else {
+        setError("Invalid email or password");
+      }
     }
   };
 
