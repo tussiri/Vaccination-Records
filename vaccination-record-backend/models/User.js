@@ -32,12 +32,24 @@ UserSchema.pre("save", function (next) {
   });
 });
 
+// UserSchema.methods.comparePassword = async function (password) {
+//   try {
+//     const isMatch = await bcrypt.compare(password, this.password);
+//     return isMatch;
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// };
+
 UserSchema.methods.comparePassword = async function (password) {
   try {
-    const hardcodedPassword = "yourTestPassword";
-    const isMatch = await bcrypt.compare(hardcodedPassword, this.password);
+    console.log("Plain Password:", password);
+    console.log("Hashed Password:", this.password);
+    const isMatch = await bcrypt.compare(password, this.password);
+    console.log("Bcrypt Comparison Result:", isMatch);
     return isMatch;
   } catch (error) {
+    console.error("Error during password comparison:", error);
     throw new Error(error);
   }
 };
